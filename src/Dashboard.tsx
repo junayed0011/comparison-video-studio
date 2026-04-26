@@ -210,7 +210,7 @@ export const Dashboard: React.FC = () => {
 		setCurrentStep(1);
 		try {
 			// Call InsForge Edge Function directly
-			const response = await fetch(`${import.meta.env.VITE_INSFORGE_BASE_URL}/api/functions/generate-video-data`, {
+			const response = await fetch(`${import.meta.env.VITE_INSFORGE_BASE_URL}/functions/v1/generate-video-data`, {
 				method: 'POST',
 				headers: { 
 					'Content-Type': 'application/json',

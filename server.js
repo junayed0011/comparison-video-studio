@@ -7,6 +7,22 @@ const fs = require('fs');
 const app = express();
 const port = 3001;
 
+// --- AUTO-UPDATE SYSTEM ---
+function checkForUpdates() {
+    console.log('🔄 Checking for cloud updates...');
+    exec('git pull origin main', (err, stdout, stderr) => {
+        if (err) {
+            console.log('⚠️ Auto-update skipped (not a git repo or offline)');
+        } else if (stdout.includes('Already up to date')) {
+            console.log('✅ System is already up to date.');
+        } else {
+            console.log('🚀 UPDATED: New changes downloaded from cloud!');
+            console.log(stdout);
+        }
+    });
+}
+checkForUpdates();
+
 app.use(cors());
 app.use(express.json());
 

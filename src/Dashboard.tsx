@@ -83,6 +83,7 @@ export const Dashboard: React.FC = () => {
 	const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
 	const [activeSidebar, setActiveSidebar] = useState<'master' | 'inspector'>('master');
 	const [inspectorTab, setInspectorTab] = useState<'project' | 'design' | 'layers' | 'item' | 'card' | 'console'>('project');
+	const [error, setError] = useState<string | null>(null);
 	
 	const [customTheme, setCustomTheme] = useState<ThemeConfig>(() => {
 		const saved = localStorage.getItem('defaultCustomTheme');
@@ -143,6 +144,15 @@ export const Dashboard: React.FC = () => {
 		setCustomTheme(next.theme);
 		setRedoStack(prev => prev.slice(0, -1));
 	};
+
+    const resetProject = () => {
+        setVideoProps(null);
+        setVideoUrl(null);
+        setLogs(['Ready for new project.']);
+        setError(null);
+        setIdea('');
+        setDuration(1);
+    };
 
 	useEffect(() => {
 		if (logRef.current) {

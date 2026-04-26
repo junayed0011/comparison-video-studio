@@ -3,6 +3,13 @@ import { Player } from '@remotion/player';
 import { ComparisonCard } from './VideoTemplate/ComparisonCard';
 import { ComparisonItem } from './VideoTemplate/types';
 import { themes, ThemeConfig, getTheme } from './lib/themes';
+import { createClient } from '@insforge/sdk';
+
+// Initialize InsForge Client
+const insforgeCloud = createClient({
+    baseUrl: import.meta.env.VITE_INSFORGE_BASE_URL || 'https://r5tj4fxt.us-east.insforge.app',
+    anonKey: import.meta.env.VITE_INSFORGE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3OC0xMjM0LTU2NzgtOTBhYi1jZGVmMTIzNDU2NzgiLCJlbWFpbCI6ImFub25AaW5zZm9yZ2UuY29tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxOTk3NDh9.QazFG5lSUr2iVBQo3bHJUwldxo1IZaXlGInsuc2XZUM'
+});
 
 // --- Premium Design System ---
 const uiTheme = {
@@ -207,25 +214,23 @@ export const Dashboard: React.FC = () => {
 		if (!idea) return;
 		setLoading(true);
 		setLogs(['Starting Cloud AI Generation...']);
+        setError(null);
 		setCurrentStep(1);
 		try {
-			// Call InsForge Edge Function directly
-			const response = await fetch(`${import.meta.env.VITE_INSFORGE_BASE_URL}/functions/v1/generate-video-data`, {
-				method: 'POST',
-				headers: { 
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${import.meta.env.VITE_INSFORGE_ANON_KEY}`
-				},
-				body: JSON.stringify({ idea, duration: Number(duration), iconType, templateSelection: 'auto' }),
-			});
-			if (!response.ok) throw new Error('Generation failed');
-			const data = await response.json();
+			// Use official SDK to invoke the function (handles URL automatically)
+			const { data, error } = await insforgeCloud.functions.invoke('generate-video-data', {
+                body: { idea, duration: Number(duration), iconType, templateSelection: 'auto' }
+            });
+
+			if (error) throw error;
+			
 			data.durationMinutes = Number(duration);
 			setVideoProps(data);
 			setLogs(prev => [...prev, '✅ Generation complete!', 'Theme: ' + data.theme]);
 			setCurrentStep(2);
 		} catch (err: any) {
 			setLogs(prev => [...prev, '❌ Error: ' + err.message]);
+            setError(err.message);
 		} finally {
 			setLoading(false);
 		}

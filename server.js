@@ -244,13 +244,9 @@ app.post('/api/generate', (req, res) => {
     })();
 });
 
-const { createClient } = require('@insforge/sdk/dist/index.cjs'); // Direct path for Node 24 stability
-
-// Initialize InsForge Client
-const insforge = createClient({
-    baseUrl: process.env.VITE_INSFORGE_BASE_URL || 'https://r5tj4fxt.us-east.insforge.app',
-    anonKey: process.env.VITE_INSFORGE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3OC0xMjM0LTU2NzgtOTBhYi1jZGVmMTIzNDU2NzgiLCJlbWFpbCI6ImFub25AaW5zZm9yZ2UuY29tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxOTk3NDh9.QazFG5lSUr2iVBQo3bHJUwldxo1IZaXlGInsuc2XZUM'
-});
+// --- INSFORGE CLOUD CONFIG ---
+const INSFORGE_URL = 'https://r5tj4fxt.us-east.insforge.app';
+const INSFORGE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3OC0xMjM0LTU2NzgtOTBhYi1jZGVmMTIzNDU2NzgiLCJlbWFpbCI6ImFub25AaW5zZm9yZ2UuY29tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxOTk3NDh9.QazFG5lSUr2iVBQo3bHJUwldxo1IZaXlGInsuc2XZUM';
 
 app.post('/api/setup', (req, res) => {
     broadcastLog('🚀 Launching Browser for Login Setup...');
@@ -314,16 +310,26 @@ app.post('/api/render', (req, res) => {
                     try {
                         broadcastLog(`☁️ Uploading to InsForge Cloud...`);
                         const videoFile = fs.readFileSync(path.join(__dirname, 'out/video.mp4'));
-                        const { data: uploadData, error } = await insforge.storage
-                            .from('videos')
-                            .uploadAuto(new Blob([videoFile], { type: 'video/mp4' }), {
-                                filename: `video_${Date.now()}.mp4`
-                            });
+                        const fileName = `video_${Date.now()}.mp4`;
+                        const uploadUrl = `${INSFORGE_URL}/storage/v1/object/videos/${fileName}`;
+                        
+                        const uploadResponse = await fetch(uploadUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${INSFORGE_KEY}`,
+                                'Content-Type': 'video/mp4',
+                                'x-upsert': 'true'
+                            },
+                            body: videoFile
+                        });
 
-                        if (error) throw error;
+                        if (!uploadResponse.ok) {
+                            const errText = await uploadResponse.text();
+                            throw new Error(`Upload failed: ${uploadResponse.status} ${errText}`);
+                        }
                         
                         broadcastLog(`✅ CLOUD UPLOAD SUCCESS!`);
-                        broadcastLog(`VIDEO_URL:${uploadData.url}`);
+                        broadcastLog(`VIDEO_URL:${INSFORGE_URL}/storage/v1/object/public/videos/${fileName}`);
                     } catch (uploadErr) {
                         broadcastLog(`⚠️ Cloud Upload Failed: ${uploadErr.message}`);
                         broadcastLog(`   Local file is still available at out/video.mp4`);

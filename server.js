@@ -244,7 +244,7 @@ app.post('/api/generate', (req, res) => {
     })();
 });
 
-const { createClient } = require('@insforge/sdk');
+const { createClient } = require('@insforge/sdk/dist/index.cjs'); // Direct path for Node 24 stability
 
 // Initialize InsForge Client
 const insforge = createClient({

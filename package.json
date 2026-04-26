@@ -1,0 +1,55 @@
+{
+  "name": "comparison-video",
+  "version": "1.0.0",
+  "description": "My Remotion video",
+  "repository": {},
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@insforge/sdk": "^1.2.5",
+    "@remotion/bundler": "4.0.451",
+    "@remotion/cli": "4.0.451",
+    "@remotion/player": "4.0.451",
+    "@remotion/renderer": "4.0.451",
+    "axios": "^1.15.2",
+    "concurrently": "^9.2.1",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "playwright": "^1.59.1",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.451",
+    "sse-channel": "^4.0.0"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.451",
+    "@remotion/tailwind-v4": "4.0.451",
+    "@types/react": "^18.3.28",
+    "@types/react-dom": "^18.3.7",
+    "@types/web": "0.0.166",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "9.19.0",
+    "prettier": "3.8.1",
+    "typescript": "5.9.3",
+    "vite": "^8.0.9"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "web": "vite",
+    "build": "remotion bundle",
+    "upgrade": "remotion upgrade",
+    "lint": "eslint src && tsc",
+    "setup-login": "node scripts/setup_login.js",
+    "server": "node server.js",
+    "start-all": "concurrently \"npm run web\" \"npm run server\""
+  },
+  "overrides": {
+    "remotion": "4.0.451"
+  },
+  "sideEffects": [
+    "*.css"
+  ]
+}

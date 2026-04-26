@@ -1,0 +1,13 @@
+node_modules/
+.DS_Store
+dist/
+out/
+temp/
+user_data/
+.insforge/
+*.mp4
+*.log
+.env
+data.json
+assets/images/
+deploy_temp/

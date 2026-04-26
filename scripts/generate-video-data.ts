@@ -78,7 +78,7 @@ export default async function(req: Request): Promise<Response> {
     for (let i = 0; i < data.items.length; i++) {
         const item = data.items[i];
         const imageSearch = await client.ai.chat.completions.create({
-            model: 'google/gemini-3-pro-image-preview',
+            model: 'openai/gpt-4o-mini',
             messages: [{ role: 'user', content: `Find a direct image URL for: ${item.image_query || item.name}` }],
             webSearch: { enabled: true, maxResults: 3 }
         });
@@ -102,6 +102,8 @@ export default async function(req: Request): Promise<Response> {
     });
 
   } catch (err) {
+    console.error(`ERROR IN FUNCTION: ${err.message}`);
+    console.error(err.stack);
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }

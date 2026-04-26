@@ -32,25 +32,38 @@ if %errorlevel% neq 0 (
     exit /b
 )
 
-:: 3. Clone or Update
-if not exist %FOLDER_NAME% (
-    echo [INFO] First time setup detected. Downloading project...
+:: 3. Smart Folder Logic
+if exist "package.json" (
+    echo [INFO] Already inside project folder. Syncing...
+    git pull origin main
+) else if exist "%FOLDER_NAME%\package.json" (
+    echo [INFO] Found project folder. Moving in and syncing...
+    cd %FOLDER_NAME%
+    git pull origin main
+) else (
+    echo [INFO] Project not found. Downloading from cloud...
     git clone %REPO_URL%
+    if %errorlevel% neq 0 (
+        echo [ERROR] Failed to download from GitHub. Check your internet.
+        pause
+        exit /b
+    )
     cd %FOLDER_NAME%
     echo.
     echo [INFO] Installing video engine (this will take about 1 minute)...
     call npm install
-) else (
-    echo [INFO] Project already exists. Syncing with cloud...
-    cd %FOLDER_NAME%
-    git pull origin main
 )
 
 :: 4. Start
 echo.
 echo ======================================================
-echo    ✅ SETUP COMPLETE! Launching Dashboard...
+echo    ✅ SYSTEM READY! Starting Studio...
 echo ======================================================
 echo.
 npm run start-all
-pause
+if %errorlevel% neq 0 (
+    echo.
+    echo [ERROR] The studio stopped unexpectedly. 
+    echo Check the error message above.
+    pause
+)

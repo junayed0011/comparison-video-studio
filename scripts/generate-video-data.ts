@@ -59,7 +59,7 @@ export default async function(req: Request): Promise<Response> {
     `;
 
     const completion = await client.ai.chat.completions.create({
-      model: 'anthropic/claude-sonnet-4.5',
+      model: 'google/gemini-3-pro-image-preview',
       messages: [{ role: 'user', content: prompt }],
       webSearch: { enabled: true, maxResults: 5 }
     });
@@ -78,7 +78,7 @@ export default async function(req: Request): Promise<Response> {
     for (let i = 0; i < data.items.length; i++) {
         const item = data.items[i];
         const imageSearch = await client.ai.chat.completions.create({
-            model: 'openai/gpt-4o-mini',
+            model: 'google/gemini-3-pro-image-preview',
             messages: [{ role: 'user', content: `Find a direct image URL for: ${item.image_query || item.name}` }],
             webSearch: { enabled: true, maxResults: 3 }
         });

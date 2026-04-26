@@ -171,7 +171,9 @@ export const Dashboard: React.FC = () => {
 			if (data.type === 'heartbeat') return;
 			if (data.message) {
 				if (data.message.startsWith('VIDEO_URL:')) {
-					setVideoUrl(data.message.replace('VIDEO_URL:', ''));
+                    const url = data.message.replace('VIDEO_URL:', '');
+					setVideoUrl(url);
+                    setVideoProps(null);
 				}
 				if (data.message.includes('Step 1/3')) setCurrentStep(1);
 				if (data.message.includes('Step 2/3')) setCurrentStep(2);
@@ -358,10 +360,22 @@ export const Dashboard: React.FC = () => {
 	return (
 		<div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: uiTheme.bg, color: uiTheme.text, overflow: 'hidden' }}>
 			<div style={{ height: '60px', borderBottom: `1px solid ${uiTheme.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 100, ...uiTheme.glass }}>
-				<div style={{ display: 'flex', alignItems: 'center', gap: 15 }}>
-					<div style={{ width: 32, height: 32, borderRadius: 8, background: uiTheme.accentGradient, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>V</div>
-					<h2 style={{ fontSize: 16, fontWeight: 700, margin: 0, letterSpacing: '-0.5px' }}>Video Studio Pro</h2>
-				</div>
+				<div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{ width: 32, height: 32, borderRadius: 10, background: uiTheme.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: 16 }}>V</div>
+                        <h1 style={{ fontSize: 16, fontWeight: 800, letterSpacing: -0.5, margin: 0 }}>Video Studio Pro</h1>
+                    </div>
+                    {videoProps && (
+                        <button 
+                            onClick={resetProject}
+                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#bbb', padding: '6px 12px', borderRadius: 8, fontSize: 11, cursor: 'pointer', transition: 'all 0.2s' }}
+                            onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                            onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                        >
+                            + New Video
+                        </button>
+                    )}
+                </div>
 				<div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
 					{videoUrl && (
 						<a href={videoUrl} target="_blank" rel="noopener noreferrer" style={{ ...buttonStyle, background: '#27ae60', textDecoration: 'none' }}>⬇️ Download Video</a>
